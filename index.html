@@ -33,8 +33,9 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            width: 100%;
+            width: 95vw; /* Slightly smaller than screen to avoid cutting off borders */
             max-width: 600px;
+            height: auto;
         }
 
         #game-container {
@@ -42,8 +43,8 @@
             width: 100%;
             aspect-ratio: 1 / 1;
             box-shadow: 0 0 50px rgba(0,0,0,0.5);
-            border: 10px solid #333;
-            border-radius: 20px;
+            border: 8px solid #333; /* Slightly thinner border for mobile fitting */
+            border-radius: 15px;
             overflow: hidden;
             background-color: #2c3e50;
         }
@@ -100,14 +101,14 @@
             display: flex;
             flex-direction: column;
             justify-content: space-between;
-            padding: 20px;
+            padding: 15px;
             box-sizing: border-box;
             pointer-events: none;
             z-index: 5;
         }
 
         .score-box {
-            font-size: 2rem;
+            font-size: 1.8rem;
             text-shadow: 2px 2px #000;
             color: var(--crt-amber);
         }
@@ -125,10 +126,12 @@
             align-items: center;
             z-index: 20;
             text-align: center;
+            padding: 20px;
+            box-sizing: border-box;
         }
 
-        h1 { font-size: 3.5rem; margin: 0; color: #f39c12; text-shadow: 4px 4px #000; }
-        p { font-size: 1.5rem; margin: 10px 0; }
+        h1 { font-size: 3rem; margin: 0; color: #f39c12; text-shadow: 4px 4px #000; }
+        p { font-size: 1.3rem; margin: 8px 0; }
         
         .btn {
             background: #e67e22;
@@ -148,31 +151,47 @@
             border-bottom-width: 2px;
         }
 
+        /* Responsive Mobile Controls */
         #mobile-controls {
             width: 100%;
             display: none;
             justify-content: center;
-            padding: 20px 0;
+            padding: 15px 0;
             background: #1a1a1a;
             z-index: 15;
         }
 
+        /* Portrait: Show Arrow Keys */
+        @media (max-width: 1024px) and (orientation: portrait) {
+            #mobile-controls { display: flex; }
+            h1 { font-size: 2.2rem; }
+        }
+
+        /* Landscape: Hide Arrow Keys to focus on Swipe */
+        @media (orientation: landscape) {
+            #mobile-controls { display: none !important; }
+            #game-wrapper {
+                max-width: 80vh; /* Don't get too big in landscape */
+            }
+            h1 { font-size: 2.5rem; }
+        }
+
         .control-pad {
             display: grid;
-            grid-template-columns: repeat(3, 70px);
-            grid-template-rows: repeat(2, 70px);
-            gap: 15px;
+            grid-template-columns: repeat(3, 65px);
+            grid-template-rows: repeat(2, 65px);
+            gap: 12px;
         }
 
         .dir-btn {
-            width: 70px;
-            height: 70px;
+            width: 65px;
+            height: 65px;
             background: #333;
             border-radius: 12px;
             display: flex;
             justify-content: center;
             align-items: center;
-            font-size: 1.8rem;
+            font-size: 1.6rem;
             color: white;
             user-select: none;
             border-bottom: 4px solid #111;
@@ -183,11 +202,6 @@
             background: #444;
             transform: translateY(2px);
             border-bottom-width: 0;
-        }
-
-        @media (max-width: 768px) {
-            #mobile-controls { display: flex; }
-            h1 { font-size: 2.5rem; }
         }
     </style>
 </head>
@@ -235,7 +249,6 @@
     const menu = document.getElementById('menu');
     const gameOverScreen = document.getElementById('game-over');
 
-    // Audio Context
     let audioCtx;
     function initAudio() {
         if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
@@ -265,9 +278,9 @@
         }
     }
 
-    // Game Constants
+    // Game Constants adjusted for a younger player
     const GRID_SIZE = 20;
-    const INITIAL_SPEED = 180;
+    const INITIAL_SPEED = 240; // Much slower start (was 180)
     let TILE_COUNT = GRID_SIZE;
     let TILE_SIZE;
 
@@ -281,7 +294,6 @@
     let isPaused = true;
     let speed = INITIAL_SPEED;
 
-    // Swipe Trail State
     let swipePath = [];
     let isSwiping = false;
 
@@ -292,7 +304,7 @@
         collar: '#e74c3c',
         bow: '#ff69b4',
         food: '#c0392b',
-        trail: 'rgba(255, 176, 0, 0.4)' // Amber trail matching CRT
+        trail: 'rgba(255, 176, 0, 0.4)'
     };
 
     function init() {
@@ -303,7 +315,6 @@
     }
 
     function resizeCanvas() {
-        // Internal resolution remains 600 for clean pixels
         canvas.width = 600;
         canvas.height = 600;
         TILE_SIZE = canvas.width / TILE_COUNT;
@@ -345,7 +356,6 @@
             touchStartX = touch.clientX;
             touchStartY = touch.clientY;
             
-            // Start path for trail
             swipePath = [{ 
                 x: (touch.clientX - rect.left) * (canvas.width / rect.width), 
                 y: (touch.clientY - rect.top) * (canvas.height / rect.height),
@@ -371,7 +381,6 @@
             handleSwipe(touchStartX, touchStartY, touch.clientX, touch.clientY);
         }, { passive: false });
 
-        // Controls
         document.getElementById('ctrl-up').onclick = () => { if (dy === 0) { nextDx = 0; nextDy = -1; }};
         document.getElementById('ctrl-down').onclick = () => { if (dy === 0) { nextDx = 0; nextDy = 1; }};
         document.getElementById('ctrl-left').onclick = () => { if (dx === 0) { nextDx = -1; nextDy = 0; }};
@@ -408,16 +417,15 @@
         snake.unshift(head);
         if (head.x === food.x && head.y === food.y) {
             playSound('eat'); score += 10; treatsEaten++; updateScore(); placeFood();
-            if (treatsEaten % 5 === 0 && speed > 60) {
-                speed -= 20; clearInterval(gameLoop); gameLoop = setInterval(draw, speed);
+            // Gradual speed up every 5 treats (reduction by 10ms instead of 20ms)
+            if (treatsEaten % 5 === 0 && speed > 70) {
+                speed -= 10; clearInterval(gameLoop); gameLoop = setInterval(draw, speed);
             }
         } else snake.pop();
     }
 
-    // High freq animation for visuals like swipe trail
     function animateFrame() {
         render();
-        // Update trail life
         swipePath.forEach(p => p.life -= 0.05);
         swipePath = swipePath.filter(p => p.life > 0);
         if (!isPaused) requestAnimationFrame(animateFrame);
@@ -427,35 +435,28 @@
         ctx.fillStyle = '#1e272e';
         ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-        // Grid
         ctx.strokeStyle = 'rgba(255,255,255,0.03)';
         for(let i=0; i<TILE_COUNT; i++) {
             ctx.strokeRect(i * TILE_SIZE, 0, 0, canvas.height);
             ctx.strokeRect(0, i * TILE_SIZE, canvas.width, 0);
         }
 
-        // Food
         drawPixelFood(food.x, food.y);
 
-        // Dog
         snake.forEach((part, index) => {
             drawDobbiePart(part.x, part.y, index, index === 0, index === snake.length - 1);
         });
 
-        // Swipe Trail
         if (swipePath.length > 1) {
             ctx.strokeStyle = COLORS.trail;
-            ctx.lineWidth = 12;
-            ctx.lineCap = 'round';
-            ctx.lineJoin = 'round';
+            ctx.lineWidth = 12; ctx.lineCap = 'round'; ctx.lineJoin = 'round';
             ctx.beginPath();
             ctx.moveTo(swipePath[0].x, swipePath[0].y);
             for (let i = 1; i < swipePath.length; i++) {
                 ctx.globalAlpha = swipePath[i].life;
                 ctx.lineTo(swipePath[i].x, swipePath[i].y);
             }
-            ctx.stroke();
-            ctx.globalAlpha = 1.0;
+            ctx.stroke(); ctx.globalAlpha = 1.0;
         }
     }
 
@@ -509,4 +510,3 @@
 </script>
 </body>
 </html>
-
