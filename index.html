@@ -195,17 +195,19 @@
     const menu = document.getElementById('menu');
     const gameOverScreen = document.getElementById('game-over');
 
-    // --- Enhanced Jaunty Music Logic ---
-    let audioCtx, musicInterval;
+    // --- Optimized Music Logic for Mobile ---
+    let audioCtx;
+    let nextNoteTime = 0.0;
+    let scheduleAheadTime = 0.1; // How far ahead to schedule audio (sec)
+    let lookahead = 25.0; // How frequently to call scheduling function (ms)
+    let musicTimerID;
     
-    // Frequencies for C major / A minor upbeat scale
     const NOTES = {
         C4: 261.63, D4: 293.66, E4: 329.63, F4: 349.23, G4: 392.00, A4: 440.00, B4: 493.88,
         C5: 523.25, D5: 587.33, E5: 659.25, G5: 783.99, 
         C3: 130.81, G3: 196.00, A3: 220.00, F3: 174.61
     };
 
-    // A hummable, happy 16-step melody
     const melodyPattern = [
         'C5', null, 'G4', null, 'A4', 'B4', 'C5', null,
         'D5', null, 'B4', null, 'G4', null, 'G4', null,
@@ -213,63 +215,80 @@
         'G5', null, 'E5', null, 'C5', null, 'C5', null
     ];
 
-    // Simple bouncy bassline
     const bassPattern = [
         'C3', 'C3', 'G3', 'G3', 'A3', 'A3', 'F3', 'F3'
     ];
 
-    let step = 0;
+    let currentStep = 0;
+    const stepDuration = 0.15; // 150ms per step
 
     function initAudio() {
         if (!audioCtx) {
             audioCtx = new (window.AudioContext || window.webkitAudioContext)();
         }
+        if (audioCtx.state === 'suspended') {
+            audioCtx.resume();
+        }
     }
 
-    function playNote(freq, dur, type = 'triangle', vol = 0.05) {
-        if (!audioCtx || !freq) return;
+    function scheduleNote(step, time) {
+        // Play Bass every 4 steps
+        if (step % 4 === 0) {
+            const bNote = bassPattern[(step / 4) % bassPattern.length];
+            playNoteAtTime(NOTES[bNote], time, 0.3, 'square', 0.015);
+        }
+
+        // Play Melody
+        const mNote = melodyPattern[step % melodyPattern.length];
+        if (mNote) {
+            playNoteAtTime(NOTES[mNote], time, 0.15, 'square', 0.035);
+        }
+    }
+
+    function playNoteAtTime(freq, time, dur, type, vol) {
+        if (!freq) return;
         const osc = audioCtx.createOscillator();
         const gain = audioCtx.createGain();
         osc.type = type;
-        osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+        osc.frequency.setValueAtTime(freq, time);
         
-        gain.gain.setValueAtTime(vol, audioCtx.currentTime);
-        gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + dur);
+        gain.gain.setValueAtTime(vol, time);
+        gain.gain.exponentialRampToValueAtTime(0.001, time + dur);
         
         osc.connect(gain);
         gain.connect(audioCtx.destination);
         
-        osc.start();
-        osc.stop(audioCtx.currentTime + dur);
+        osc.start(time);
+        osc.stop(time + dur);
+    }
+
+    function scheduler() {
+        while (nextNoteTime < audioCtx.currentTime + scheduleAheadTime) {
+            scheduleNote(currentStep, nextNoteTime);
+            nextStep();
+        }
+        musicTimerID = window.setTimeout(scheduler, lookahead);
+    }
+
+    function nextStep() {
+        nextNoteTime += stepDuration;
+        currentStep++;
     }
 
     function startMusic() {
-        if (musicInterval) clearInterval(musicInterval);
-        step = 0;
-        musicInterval = setInterval(() => {
-            if (isPaused) return;
-
-            // Play Bass every 4 steps (on the beat)
-            if (step % 4 === 0) {
-                const bNote = bassPattern[(step / 4) % bassPattern.length];
-                playNote(NOTES[bNote], 0.3, 'square', 0.02);
-            }
-
-            // Play Melody
-            const mNote = melodyPattern[step % melodyPattern.length];
-            if (mNote) {
-                playNote(NOTES[mNote], 0.15, 'square', 0.04);
-            }
-
-            step++;
-        }, 150); // Fast steps for syncopation
+        if (musicTimerID) window.clearTimeout(musicTimerID);
+        currentStep = 0;
+        nextNoteTime = audioCtx.currentTime + 0.05;
+        scheduler();
     }
 
     function playSfx(type) {
-        if (type === 'eat') playNote(1046.50, 0.1, 'square', 0.08); // High C
+        if (!audioCtx) return;
+        const time = audioCtx.currentTime;
+        if (type === 'eat') playNoteAtTime(1046.50, time, 0.1, 'square', 0.08);
         if (type === 'die') {
-            playNote(130.81, 0.5, 'sawtooth', 0.1);
-            playNote(110, 0.5, 'sawtooth', 0.1);
+            playNoteAtTime(130.81, time, 0.5, 'sawtooth', 0.1);
+            playNoteAtTime(110, time + 0.05, 0.5, 'sawtooth', 0.1);
         }
     }
 
@@ -386,7 +405,7 @@
             isPaused = true;
             finalScoreElement.innerText = score;
             gameOverScreen.style.display = 'flex';
-            if (musicInterval) clearInterval(musicInterval);
+            if (musicTimerID) window.clearTimeout(musicTimerID);
             return;
         }
 
