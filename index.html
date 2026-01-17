@@ -9,7 +9,6 @@
 
         :root {
             --bg-color: #1a1a1a;
-            --crt-green: #33ff33;
             --crt-amber: #ffb000;
         }
 
@@ -33,8 +32,8 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            width: 95vw; /* Slightly smaller than screen to avoid cutting off borders */
-            max-width: 600px;
+            width: 90vw;
+            max-width: 500px;
             height: auto;
         }
 
@@ -42,47 +41,22 @@
             position: relative;
             width: 100%;
             aspect-ratio: 1 / 1;
-            box-shadow: 0 0 50px rgba(0,0,0,0.5);
-            border: 8px solid #333; /* Slightly thinner border for mobile fitting */
-            border-radius: 15px;
+            box-shadow: 0 0 40px rgba(0,0,0,0.8);
+            border: 6px solid #444;
+            border-radius: 12px;
             overflow: hidden;
             background-color: #2c3e50;
+            box-sizing: border-box;
         }
 
-        /* CRT Effect Overlay */
         #crt-overlay {
             position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
+            top: 0; left: 0; width: 100%; height: 100%;
             pointer-events: none;
             z-index: 10;
-            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), 
-                        linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
-            background-size: 100% 4px, 3px 100%;
-            box-shadow: inset 0 0 100px rgba(0,0,0,0.5);
-        }
-
-        #crt-overlay::after {
-            content: " ";
-            display: block;
-            position: absolute;
-            top: 0;
-            left: 0;
-            bottom: 0;
-            right: 0;
-            background: rgba(18, 16, 16, 0.1);
-            opacity: 0;
-            z-index: 10;
-            pointer-events: none;
-            animation: flicker 0.15s infinite;
-        }
-
-        @keyframes flicker {
-            0% { opacity: 0.27; }
-            50% { opacity: 0.32; }
-            100% { opacity: 0.27; }
+            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.15) 50%), 
+                        linear-gradient(90deg, rgba(255, 0, 0, 0.03), rgba(0, 255, 0, 0.01), rgba(0, 0, 255, 0.03));
+            background-size: 100% 3px, 2px 100%;
         }
 
         canvas {
@@ -94,32 +68,26 @@
 
         #ui-layer {
             position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
+            top: 0; left: 0; width: 100%; height: 100%;
             display: flex;
             flex-direction: column;
             justify-content: space-between;
-            padding: 15px;
+            padding: 10px;
             box-sizing: border-box;
             pointer-events: none;
             z-index: 5;
         }
 
         .score-box {
-            font-size: 1.8rem;
-            text-shadow: 2px 2px #000;
+            font-size: 1.5rem;
             color: var(--crt-amber);
+            text-shadow: 2px 2px #000;
         }
 
         #menu, #game-over {
             position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0,0,0,0.85);
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.8);
             display: flex;
             flex-direction: column;
             justify-content: center;
@@ -130,78 +98,56 @@
             box-sizing: border-box;
         }
 
-        h1 { font-size: 3rem; margin: 0; color: #f39c12; text-shadow: 4px 4px #000; }
-        p { font-size: 1.3rem; margin: 8px 0; }
+        h1 { font-size: 2.5rem; margin: 0; color: #f39c12; text-shadow: 3px 3px #000; }
+        p { font-size: 1.2rem; margin: 5px 0; }
         
         .btn {
             background: #e67e22;
             color: white;
-            padding: 12px 24px;
+            padding: 10px 20px;
             font-family: 'VT323', monospace;
-            font-size: 1.8rem;
+            font-size: 1.5rem;
             border: none;
             cursor: pointer;
             pointer-events: auto;
-            border-bottom: 5px solid #d35400;
-            margin-top: 15px;
+            border-bottom: 4px solid #d35400;
+            margin-top: 10px;
         }
 
-        .btn:active {
-            transform: translateY(2px);
-            border-bottom-width: 2px;
-        }
-
-        /* Responsive Mobile Controls */
         #mobile-controls {
             width: 100%;
             display: none;
             justify-content: center;
             padding: 15px 0;
-            background: #1a1a1a;
             z-index: 15;
         }
 
-        /* Portrait: Show Arrow Keys */
-        @media (max-width: 1024px) and (orientation: portrait) {
+        @media (orientation: portrait) {
             #mobile-controls { display: flex; }
-            h1 { font-size: 2.2rem; }
         }
 
-        /* Landscape: Hide Arrow Keys to focus on Swipe */
         @media (orientation: landscape) {
             #mobile-controls { display: none !important; }
-            #game-wrapper {
-                max-width: 80vh; /* Don't get too big in landscape */
-            }
-            h1 { font-size: 2.5rem; }
+            #game-wrapper { max-width: 75vh; }
         }
 
         .control-pad {
             display: grid;
-            grid-template-columns: repeat(3, 65px);
-            grid-template-rows: repeat(2, 65px);
-            gap: 12px;
+            grid-template-columns: repeat(3, 60px);
+            grid-template-rows: repeat(2, 60px);
+            gap: 10px;
         }
 
         .dir-btn {
-            width: 65px;
-            height: 65px;
+            width: 60px; height: 60px;
             background: #333;
-            border-radius: 12px;
+            border-radius: 10px;
             display: flex;
             justify-content: center;
             align-items: center;
-            font-size: 1.6rem;
+            font-size: 1.4rem;
             color: white;
-            user-select: none;
             border-bottom: 4px solid #111;
-            cursor: pointer;
-        }
-
-        .dir-btn:active {
-            background: #444;
-            transform: translateY(2px);
-            border-bottom-width: 0;
         }
     </style>
 </head>
@@ -219,13 +165,13 @@
         <div id="menu">
             <h1>DOBBIE'S LONG DAY</h1>
             <p>Help Dobbie find the sausages!</p>
-            <p>Use Arrows or Swipe on Screen</p>
+            <p>Swipe or use Arrows</p>
             <button class="btn" onclick="startGame()">START GAME</button>
         </div>
 
         <div id="game-over" style="display: none;">
             <h1>OH NO!</h1>
-            <p>Dobbie tangled her tummy!</p>
+            <p>Dobbie is all tangled!</p>
             <p>Final Score: <span id="final-score">0</span></p>
             <button class="btn" onclick="startGame()">TRY AGAIN</button>
         </div>
@@ -249,47 +195,94 @@
     const menu = document.getElementById('menu');
     const gameOverScreen = document.getElementById('game-over');
 
-    let audioCtx;
-    function initAudio() {
-        if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-    }
+    // --- Enhanced Jaunty Music Logic ---
+    let audioCtx, musicInterval;
+    
+    // Frequencies for C major / A minor upbeat scale
+    const NOTES = {
+        C4: 261.63, D4: 293.66, E4: 329.63, F4: 349.23, G4: 392.00, A4: 440.00, B4: 493.88,
+        C5: 523.25, D5: 587.33, E5: 659.25, G5: 783.99, 
+        C3: 130.81, G3: 196.00, A3: 220.00, F3: 174.61
+    };
 
-    function playSound(type) {
-        if (!audioCtx) return;
-        const osc = audioCtx.createOscillator();
-        const gain = audioCtx.createGain();
-        osc.connect(gain);
-        gain.connect(audioCtx.destination);
-        const now = audioCtx.currentTime;
-        if (type === 'eat') {
-            osc.type = 'square';
-            osc.frequency.setValueAtTime(440, now);
-            osc.frequency.exponentialRampToValueAtTime(880, now + 0.1);
-            gain.gain.setValueAtTime(0.05, now);
-            gain.gain.exponentialRampToValueAtTime(0.01, now + 0.1);
-            osc.start(now); osc.stop(now + 0.1);
-        } else if (type === 'die') {
-            osc.type = 'sawtooth';
-            osc.frequency.setValueAtTime(220, now);
-            osc.frequency.linearRampToValueAtTime(40, now + 0.5);
-            gain.gain.setValueAtTime(0.1, now);
-            gain.gain.exponentialRampToValueAtTime(0.01, now + 0.5);
-            osc.start(now); osc.stop(now + 0.5);
+    // A hummable, happy 16-step melody
+    const melodyPattern = [
+        'C5', null, 'G4', null, 'A4', 'B4', 'C5', null,
+        'D5', null, 'B4', null, 'G4', null, 'G4', null,
+        'E5', 'D5', 'C5', null, 'G4', 'A4', 'B4', 'C5',
+        'G5', null, 'E5', null, 'C5', null, 'C5', null
+    ];
+
+    // Simple bouncy bassline
+    const bassPattern = [
+        'C3', 'C3', 'G3', 'G3', 'A3', 'A3', 'F3', 'F3'
+    ];
+
+    let step = 0;
+
+    function initAudio() {
+        if (!audioCtx) {
+            audioCtx = new (window.AudioContext || window.webkitAudioContext)();
         }
     }
 
-    // Game Constants adjusted for a younger player
+    function playNote(freq, dur, type = 'triangle', vol = 0.05) {
+        if (!audioCtx || !freq) return;
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.type = type;
+        osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+        
+        gain.gain.setValueAtTime(vol, audioCtx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + dur);
+        
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        
+        osc.start();
+        osc.stop(audioCtx.currentTime + dur);
+    }
+
+    function startMusic() {
+        if (musicInterval) clearInterval(musicInterval);
+        step = 0;
+        musicInterval = setInterval(() => {
+            if (isPaused) return;
+
+            // Play Bass every 4 steps (on the beat)
+            if (step % 4 === 0) {
+                const bNote = bassPattern[(step / 4) % bassPattern.length];
+                playNote(NOTES[bNote], 0.3, 'square', 0.02);
+            }
+
+            // Play Melody
+            const mNote = melodyPattern[step % melodyPattern.length];
+            if (mNote) {
+                playNote(NOTES[mNote], 0.15, 'square', 0.04);
+            }
+
+            step++;
+        }, 150); // Fast steps for syncopation
+    }
+
+    function playSfx(type) {
+        if (type === 'eat') playNote(1046.50, 0.1, 'square', 0.08); // High C
+        if (type === 'die') {
+            playNote(130.81, 0.5, 'sawtooth', 0.1);
+            playNote(110, 0.5, 'sawtooth', 0.1);
+        }
+    }
+
+    // --- Game Logic ---
     const GRID_SIZE = 20;
-    const INITIAL_SPEED = 240; // Much slower start (was 180)
-    let TILE_COUNT = GRID_SIZE;
+    const INITIAL_SPEED = 450; 
     let TILE_SIZE;
 
-    // Game State
     let snake = [];
     let food = { x: 5, y: 5 };
     let dx = 1, dy = 0;
     let nextDx = 1, nextDy = 0;
-    let score = 0, treatsEaten = 0;
+    let score = 0;
     let gameLoop;
     let isPaused = true;
     let speed = INITIAL_SPEED;
@@ -298,214 +291,163 @@
     let isSwiping = false;
 
     const COLORS = {
-        dog: '#8d4925',
-        ear: '#5d2906',
-        nose: '#1a1a1a',
-        collar: '#e74c3c',
-        bow: '#ff69b4',
-        food: '#c0392b',
-        trail: 'rgba(255, 176, 0, 0.4)'
+        dog: '#8d4925', ear: '#5d2906', nose: '#1a1a1a',
+        collar: '#e74c3c', bow: '#ff69b4', food: '#c0392b',
+        trail: 'rgba(255, 176, 0, 0.3)'
     };
 
     function init() {
-        resizeCanvas();
-        window.addEventListener('resize', resizeCanvas);
-        window.addEventListener('keydown', handleKeyPress);
-        setupTouch();
+        resize();
+        window.addEventListener('resize', resize);
+        window.addEventListener('keydown', handleKeys);
+        setupControls();
     }
 
-    function resizeCanvas() {
+    function resize() {
         canvas.width = 600;
         canvas.height = 600;
-        TILE_SIZE = canvas.width / TILE_COUNT;
+        TILE_SIZE = canvas.width / GRID_SIZE;
     }
 
     function startGame() {
         initAudio();
         menu.style.display = 'none';
         gameOverScreen.style.display = 'none';
-        score = 0; treatsEaten = 0; speed = INITIAL_SPEED;
+        score = 0; speed = INITIAL_SPEED;
         updateScore();
         snake = [{ x: 10, y: 10 }, { x: 9, y: 10 }, { x: 8, y: 10 }];
         dx = 1; dy = 0; nextDx = 1; nextDy = 0;
         placeFood();
         isPaused = false;
+        startMusic();
         if (gameLoop) clearInterval(gameLoop);
-        gameLoop = setInterval(draw, speed);
-        requestAnimationFrame(animateFrame);
+        gameLoop = setInterval(update, speed);
+        requestAnimationFrame(draw);
     }
 
-    function handleKeyPress(e) {
+    function handleKeys(e) {
         if (isPaused) return;
-        switch(e.key) {
-            case 'ArrowUp': if (dy === 0) { nextDx = 0; nextDy = -1; } break;
-            case 'ArrowDown': if (dy === 0) { nextDx = 0; nextDy = 1; } break;
-            case 'ArrowLeft': if (dx === 0) { nextDx = -1; nextDy = 0; } break;
-            case 'ArrowRight': if (dx === 0) { nextDx = 1; nextDy = 0; } break;
-        }
+        if (e.key === 'ArrowUp' && dy === 0) { nextDx = 0; nextDy = -1; }
+        if (e.key === 'ArrowDown' && dy === 0) { nextDx = 0; nextDy = 1; }
+        if (e.key === 'ArrowLeft' && dx === 0) { nextDx = -1; nextDy = 0; }
+        if (e.key === 'ArrowRight' && dx === 0) { nextDx = 1; nextDy = 0; }
     }
 
-    function setupTouch() {
-        let touchStartX = 0;
-        let touchStartY = 0;
-
+    function setupControls() {
+        let tsX = 0, tsY = 0;
         canvas.addEventListener('touchstart', e => {
             isSwiping = true;
-            const touch = e.touches[0];
-            const rect = canvas.getBoundingClientRect();
-            touchStartX = touch.clientX;
-            touchStartY = touch.clientY;
-            
-            swipePath = [{ 
-                x: (touch.clientX - rect.left) * (canvas.width / rect.width), 
-                y: (touch.clientY - rect.top) * (canvas.height / rect.height),
-                life: 1.0 
-            }];
+            const t = e.touches[0];
+            const r = canvas.getBoundingClientRect();
+            tsX = t.clientX; tsY = t.clientY;
+            swipePath = [{ x: (t.clientX - r.left) * (600/r.width), y: (t.clientY - r.top) * (600/r.height), life: 1 }];
         }, { passive: false });
 
         canvas.addEventListener('touchmove', e => {
-            e.preventDefault();
             if (!isSwiping) return;
-            const touch = e.touches[0];
-            const rect = canvas.getBoundingClientRect();
-            swipePath.push({ 
-                x: (touch.clientX - rect.left) * (canvas.width / rect.width), 
-                y: (touch.clientY - rect.top) * (canvas.height / rect.height),
-                life: 1.0 
-            });
+            e.preventDefault();
+            const t = e.touches[0];
+            const r = canvas.getBoundingClientRect();
+            swipePath.push({ x: (t.clientX - r.left) * (600/r.width), y: (t.clientY - r.top) * (600/r.height), life: 1 });
         }, { passive: false });
 
         canvas.addEventListener('touchend', e => {
             isSwiping = false;
-            const touch = e.changedTouches[0];
-            handleSwipe(touchStartX, touchStartY, touch.clientX, touch.clientY);
-        }, { passive: false });
+            const t = e.changedTouches[0];
+            const sX = t.clientX - tsX;
+            const sY = t.clientY - tsY;
+            if (Math.abs(sX) > Math.abs(sY)) {
+                if (Math.abs(sX) > 30 && dx === 0) { nextDx = sX > 0 ? 1 : -1; nextDy = 0; }
+            } else {
+                if (Math.abs(sY) > 30 && dy === 0) { nextDy = sY > 0 ? 1 : -1; nextDx = 0; }
+            }
+        });
 
-        document.getElementById('ctrl-up').onclick = () => { if (dy === 0) { nextDx = 0; nextDy = -1; }};
-        document.getElementById('ctrl-down').onclick = () => { if (dy === 0) { nextDx = 0; nextDy = 1; }};
-        document.getElementById('ctrl-left').onclick = () => { if (dx === 0) { nextDx = -1; nextDy = 0; }};
-        document.getElementById('ctrl-right').onclick = () => { if (dx === 0) { nextDx = 1; nextDy = 0; }};
-    }
-
-    function handleSwipe(x1, y1, x2, y2) {
-        const swX = x2 - x1;
-        const swY = y2 - y1;
-        const threshold = 30;
-        if (Math.abs(swX) > Math.abs(swY)) {
-            if (swX > threshold && dx === 0) { nextDx = 1; nextDy = 0; }
-            else if (swX < -threshold && dx === 0) { nextDx = -1; nextDy = 0; }
-        } else {
-            if (swY > threshold && dy === 0) { nextDx = 0; nextDy = 1; }
-            else if (swY < -threshold && dy === 0) { nextDx = 0; nextDy = -1; }
-        }
+        document.getElementById('ctrl-up').onclick = () => { if(dy===0){nextDx=0;nextDy=-1;} };
+        document.getElementById('ctrl-down').onclick = () => { if(dy===0){nextDx=0;nextDy=1;} };
+        document.getElementById('ctrl-left').onclick = () => { if(dx===0){nextDx=-1;nextDy=0;} };
+        document.getElementById('ctrl-right').onclick = () => { if(dx===0){nextDx=1;nextDy=0;} };
     }
 
     function placeFood() {
-        food.x = Math.floor(Math.random() * TILE_COUNT);
-        food.y = Math.floor(Math.random() * TILE_COUNT);
+        food.x = Math.floor(Math.random() * GRID_SIZE);
+        food.y = Math.floor(Math.random() * GRID_SIZE);
         if (snake.some(p => p.x === food.x && p.y === food.y)) placeFood();
     }
 
-    function draw() {
+    function update() {
         if (isPaused) return;
         dx = nextDx; dy = nextDy;
         const head = { x: snake[0].x + dx, y: snake[0].y + dy };
-        if (head.x < 0 || head.x >= TILE_COUNT || head.y < 0 || head.y >= TILE_COUNT ||
+        
+        if (head.x < 0 || head.x >= GRID_SIZE || head.y < 0 || head.y >= GRID_SIZE || 
             snake.some(p => p.x === head.x && p.y === head.y)) {
-            playSound('die'); endGame(); return;
+            playSfx('die');
+            isPaused = true;
+            finalScoreElement.innerText = score;
+            gameOverScreen.style.display = 'flex';
+            if (musicInterval) clearInterval(musicInterval);
+            return;
         }
+
         snake.unshift(head);
         if (head.x === food.x && head.y === food.y) {
-            playSound('eat'); score += 10; treatsEaten++; updateScore(); placeFood();
-            // Gradual speed up every 5 treats (reduction by 10ms instead of 20ms)
-            if (treatsEaten % 5 === 0 && speed > 70) {
-                speed -= 10; clearInterval(gameLoop); gameLoop = setInterval(draw, speed);
+            playSfx('eat');
+            score += 10;
+            updateScore();
+            placeFood();
+            if (score % 50 === 0 && speed > 250) {
+                speed -= 10;
+                clearInterval(gameLoop);
+                gameLoop = setInterval(update, speed);
             }
         } else snake.pop();
     }
 
-    function animateFrame() {
-        render();
-        swipePath.forEach(p => p.life -= 0.05);
-        swipePath = swipePath.filter(p => p.life > 0);
-        if (!isPaused) requestAnimationFrame(animateFrame);
-    }
-
-    function render() {
+    function draw() {
         ctx.fillStyle = '#1e272e';
         ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-        ctx.strokeStyle = 'rgba(255,255,255,0.03)';
-        for(let i=0; i<TILE_COUNT; i++) {
-            ctx.strokeRect(i * TILE_SIZE, 0, 0, canvas.height);
-            ctx.strokeRect(0, i * TILE_SIZE, canvas.width, 0);
-        }
+        const fx = food.x * TILE_SIZE, fy = food.y * TILE_SIZE;
+        ctx.fillStyle = COLORS.food;
+        ctx.beginPath();
+        ctx.roundRect(fx + 6, fy + 10, TILE_SIZE - 12, 10, 5);
+        ctx.fill();
 
-        drawPixelFood(food.x, food.y);
-
-        snake.forEach((part, index) => {
-            drawDobbiePart(part.x, part.y, index, index === 0, index === snake.length - 1);
+        snake.forEach((p, i) => {
+            const px = p.x * TILE_SIZE, py = p.y * TILE_SIZE;
+            ctx.fillStyle = COLORS.dog;
+            if (i === 0) {
+                ctx.fillRect(px + 2, py + 2, TILE_SIZE - 4, TILE_SIZE - 4);
+                ctx.fillStyle = COLORS.ear;
+                ctx.fillRect(px + 2, py + 4, 4, TILE_SIZE - 8);
+                ctx.fillRect(px + TILE_SIZE - 6, py + 4, 4, TILE_SIZE - 8);
+                ctx.fillStyle = 'white';
+                ctx.fillRect(px + 6, py + 6, 4, 4); ctx.fillRect(px + TILE_SIZE - 10, py + 6, 4, 4);
+                ctx.fillStyle = COLORS.bow;
+                ctx.fillRect(px + TILE_SIZE/2 - 2, py, 4, 4);
+            } else {
+                ctx.fillRect(px + 5, py + 5, TILE_SIZE - 10, TILE_SIZE - 10);
+            }
         });
 
         if (swipePath.length > 1) {
             ctx.strokeStyle = COLORS.trail;
-            ctx.lineWidth = 12; ctx.lineCap = 'round'; ctx.lineJoin = 'round';
+            ctx.lineWidth = 10; ctx.lineCap = 'round'; ctx.lineJoin = 'round';
             ctx.beginPath();
             ctx.moveTo(swipePath[0].x, swipePath[0].y);
-            for (let i = 1; i < swipePath.length; i++) {
-                ctx.globalAlpha = swipePath[i].life;
-                ctx.lineTo(swipePath[i].x, swipePath[i].y);
-            }
-            ctx.stroke(); ctx.globalAlpha = 1.0;
+            swipePath.forEach(p => { ctx.globalAlpha = p.life; ctx.lineTo(p.x, p.y); });
+            ctx.stroke(); ctx.globalAlpha = 1;
         }
-    }
 
-    function drawDobbiePart(x, y, index, isHead, isTail) {
-        const px = x * TILE_SIZE, py = y * TILE_SIZE, pSize = TILE_SIZE;
-        ctx.fillStyle = COLORS.dog;
-        if (isHead) {
-            ctx.fillRect(px + 2, py + 2, pSize - 4, pSize - 4);
-            ctx.fillStyle = COLORS.ear;
-            ctx.fillRect(px + 2, py + 4, 4, pSize - 8);
-            ctx.fillRect(px + pSize - 6, py + 4, 4, pSize - 8);
-            ctx.fillStyle = COLORS.nose;
-            if (dx === 1) ctx.fillRect(px + pSize - 4, py + pSize/2 - 2, 4, 4);
-            else if (dx === -1) ctx.fillRect(px, py + pSize/2 - 2, 4, 4);
-            else if (dy === 1) ctx.fillRect(px + pSize/2 - 2, py + pSize - 4, 4, 4);
-            else if (dy === -1) ctx.fillRect(px + pSize/2 - 2, py, 4, 4);
-            ctx.fillStyle = "white";
-            ctx.fillRect(px + pSize/2 - 6, py + 6, 4, 4); ctx.fillRect(px + pSize/2 + 2, py + 6, 4, 4);
-            ctx.fillStyle = "black";
-            ctx.fillRect(px + pSize/2 - 5, py + 7, 2, 2); ctx.fillRect(px + pSize/2 + 3, py + 7, 2, 2);
-            ctx.fillStyle = COLORS.bow;
-            ctx.fillRect(px + pSize/2 - 2, py + 1, 4, 4);
-            ctx.fillRect(px + pSize/2 - 5, py, 3, 3); ctx.fillRect(px + pSize/2 + 2, py, 3, 3);
-            ctx.fillStyle = COLORS.collar;
-            if (dy !== 0) ctx.fillRect(px + 2, py + (dy === 1 ? 0 : pSize - 4), pSize - 4, 4);
-            else ctx.fillRect(px + (dx === 1 ? 0 : pSize - 4), py + 2, 4, pSize - 4);
-        } else if (isTail) {
-            ctx.fillRect(px + 6, py + 6, pSize - 12, pSize - 12);
-        } else {
-            ctx.fillRect(px + 4, py + 4, pSize - 8, pSize - 8);
-            if (index % 4 === 0) {
-                ctx.fillStyle = COLORS.ear;
-                ctx.fillRect(px + 2, py + pSize - 4, 4, 4); ctx.fillRect(px + pSize - 6, py + pSize - 4, 4, 4);
-            }
-        }
-    }
+        swipePath.forEach(p => p.life -= 0.04);
+        swipePath = swipePath.filter(p => p.life > 0);
 
-    function drawPixelFood(x, y) {
-        const px = x * TILE_SIZE, py = y * TILE_SIZE;
-        ctx.fillStyle = COLORS.food;
-        ctx.beginPath();
-        ctx.roundRect(px + 6, py + 10, TILE_SIZE - 12, 10, 5);
-        ctx.fill();
-        ctx.fillStyle = 'rgba(255,255,255,0.3)';
-        ctx.fillRect(px + 10, py + 12, 8, 2);
+        if (!isPaused) requestAnimationFrame(draw);
     }
 
     function updateScore() { scoreElement.innerText = score.toString().padStart(4, '0'); }
-    function endGame() { isPaused = true; finalScoreElement.innerText = score; gameOverScreen.style.display = 'flex'; }
+
     window.onload = init;
 </script>
 </body>
